@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>User Home :: Inventory Management System - RCS2</title>
+    
+    <!-- title icon -->
+	<link rel="shortcut icon" type="image/x-icon" href="images/logo.jpg" />
+	
+	<link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+	<style>
+		body {
+		    font-family: 'Poppins';
+		    background-color: #e2e8f0;
+		}
+	</style>
+
+  </head>
+  <body>
+  
+  <!-- ---------------------------------------------------------------   Navigation Bar Content ----------------------------------------------------------------- -->
+	<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+	  <div class="container-fluid">
+	    <a class="navbar-brand" th:href="@{/user-home}">Inventory Management System - RCS2</a>
+	    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarRoutes" aria-controls="navbarRoutes" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+	    <div class="collapse navbar-collapse justify-content-end" id="navbarRoutes">
+	      <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
+	        <li class="nav-item">
+	          <a class="nav-link active" aria-current="page" th:href="@{/user-home}">Home</a>
+	        </li>	
+	        <li class="nav-item">
+	          <a class="nav-link active" aria-current="page" th:href="@{/product-assemble}">Product Assemble</a>
+	        </li>
+	        <li class="nav-item">
+	          <a class="nav-link active" aria-current="page" th:href="@{/product-repair}">Product Repair</a>
+	        </li>
+	        <li class="nav-item dropdown">
+	          <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+	            View
+	          </a>
+	          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+	          	<li><a class="dropdown-item" th:href="@{/categories}">View Categories</a></li>
+	            <li><a class="dropdown-item" th:href="@{/inventory}">Stock Inventory</a></li>
+	          	<li><a class="dropdown-item" th:href="@{/workshop-inventory}">Workshop Inventory</a></li>
+	          	<li><a class="dropdown-item" th:href="@{/allocated-products}">Allocated Products</a></li>
+	          	<li><a class="dropdown-item" th:href="@{/finished-products}">Finished Products</a></li>
+	            <li><hr class="dropdown-divider"></li>
+	          	<li><a class="dropdown-item" th:href="@{/all-products}">All Products</a></li>
+	          </ul>
+	        </li>
+	        <!-- <li class="nav-item">
+	          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+	        </li> -->
+	      </ul>
+	        <a class="btn btn-secondary my-2 my-sm-0" type="submit" th:href="@{/logout}">Logout</a>
+	    </div>
+	  </div>
+	</nav>
+	
+	<!-- <div sec:authorize="isAuthenticated()">
+		<span sec:authentication="name"></span>
+		<span th:text ="${#authentication.getPrincipal().getName()}"></span>
+	</div> -->
+	
+	<div class="d-none" id="assembleSuccessAlert">
+		<div class="alert alert-success text-center">
+			Successfully Assembled
+		</div>
+	</div>
+	<div class="d-none" id="assembleErrorAlert">
+		<div class="alert alert-danger text-center">
+			Product is not available at the Workshop.
+		</div>
+	</div>
+	<div class="d-none" id="removeProductErrorAlert">
+		<div class="alert alert-danger text-center" id="removeProductErrorAlertContent"></div>
+	</div>
+	<div class="d-none" id="removeProductSuccessAlert">
+		<div class="alert alert-success text-center">
+			Success: Item Removed from Main Product
+		</div>
+	</div>
+	 
+	<h1 th:text="${'Hello User: ' + username}">User Home</h1>
+	
+	<div class="d-none" id="assembleProductResponse">
+		<div class="alert text-center" id="assembleProductResponseAlert">
+			<span id="assembleProductResponseDetail"></span>
+		</div>
+	</div>
+	
+	<div class="container card mt-5 mb-5 p-5">
+		<div class="row m-3">
+			<div class="container mb-3">
+				<h2 class="mb-3">Product repairs</h2>
+				<form class="form" onsubmit="return false;">
+					<input class="form-control" placeholder="scan barcode of Main Product" id="barcodeScanInput"/>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	<div class="container card justify-content-center" id="mainContainer">
+		<div class="row" id="productDetailsCol">
+			<h2 class="text-center mb-5 mt-5">Product Details</h2>
+		</div>
+		<div id="productDetailsTable">
+			<table class="table" id="productDetailsTable">
+			  <thead>
+			    <tr>
+			      <th scope="col" class="text-center">Serial Number</th>
+			      <th scope="col">Product Name</th>
+			      <th scope="col">Product Description</th>
+			      <th scope="col">Product Status</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <th scope="row" class="text-center" id="productDetailsSerialNumber"></th>
+			      <td id="productDetailsProductName"></td>
+			      <td id="productDetailsDescription"></td>
+			      <td id="productDetailsStatus"></td>
+			    </tr>
+			    <tr>
+			    	<td colspan="4" class="text-center text-danger">
+			    		--- No data available ---
+			    	</td>
+			    </tr>
+			  </tbody>
+			</table>
+		</div>
+		<div class="row" id="addAndRemoveProductSection">
+			<div class="mt-3 mb-3" id="addProductField">
+		      <form class="form m-3" onsubmit="return false;">
+			      <div class="row">
+		      		<div class="col-8"> 
+				      	<input type="text" class="form-control" id="insertProductField" placeholder="scan serial to add more" required/>
+		      		</div>
+		      		<div class="col">
+				      	<button class="btn btn-success" id="assembleIntoButton">Assemble into product</button>
+		      		</div>
+			      </div>
+		      </form>
+		      <form class="form m-3">
+		      	<div class="row">
+		      		<div class="col-8">
+		      			<input type="text" class="form-control" placeholder="scan barcode to remove" id="removeItemSerial"/>
+		      		</div>
+		      		<div class="col">
+		      			<button class="btn btn-warning" id="removeItemSerialButton">Remove Item</button>
+		      		</div>
+		      	</div>
+		      </form>
+		    </div>
+		</div>
+		<div class="row">
+			<table class="table">
+			  <tbody id="assembledProductDetailsTableBody">
+			  </tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div class="container card p-3 mt-3 mb-5" id="assembledProductsDetailsAccordionContainer">
+	  <div class="row">
+	  	<h2 class="mt-3 mb-3 text-center">Assembled Product Details</h2>
+	  </div>
+	  <div class="accordion" id="assembledProductDetailsAccordion">
+	  </div>
+	</div>
+	
+	<!-- Modal -->
+	<div class="modal fade" id="replaceModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">Replace Product with</h5>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body">
+	      	<input type="hidden" id="removingSerial" class="form-control" />
+	        <input type="text" id="replacingSerial" class="form-control" placeholder="scan replacing product barcode"/>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+	        <button type="button" class="btn btn-success" id="confirmReplace" data-bs-dismiss="modal">Confirm Replace</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+    <!-- Optional JavaScript; choose one of the two! -->
+    
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+ 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+  
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script> -->
+ 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/js/productRepair.js"></script>
+  </body>
+</html>
