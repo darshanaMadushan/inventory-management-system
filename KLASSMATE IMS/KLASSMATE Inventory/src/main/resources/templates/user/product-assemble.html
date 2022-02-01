@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments/head :: head(~{::title}, ~{})">
+	<title>Product Assemble :: KLIMS</title>
+</head>
+
+<body class="">
+  <div class="wrapper ">
+  <!-- ---------------------- Navigation content -------------------------- -->
+    <div th:insert="fragments/sidebar :: sidebar(active='product-assemble')"></div>
+    <div class="main-panel">
+      <!-- Navbar -->
+      <div th:insert="fragments/navbar(title='Product Assemble')"></div>
+      
+      <div class="content">
+		<!-- -----------------------------------------alerts ----------------------------- -->
+		<div class="d-none" id="productSearchError">
+			<div class="alert alert-danger text-center" id="errorDiv">
+				<span id="errorDetails" class="fw-bold"></span>
+			</div>
+		</div>
+		
+		<div class="container-fluid card">
+			<div class="card-header">
+				<h4 class="card-title">Select Project</h4>
+			</div>
+			<div class="card-body">
+				<div class="row">
+					<div class="col-md-8">
+						<select class="form-select" id="projectSelect">
+							<option value="">--Select Project--</option>
+							<option th:each="project: ${projects}" th:value="${project.getProjectId()}" th:text="${project.getName()} + ' - ' + ${project.getDescription()} + ' - ' + ${project.getQuantity()} + ' units - [ ' + ${project.getPriority()} + ' prioirity ]'"></option>
+						</select>
+						<small id="projectSelectError" class="text-danger text-center"></small>
+					</div>
+					<div class="col-md-4">
+						<button class="btn btn-primary" id="startAssembling" onclick="javascript:showAssembleDiv()">Start Assembling</button>
+						<button class="btn btn-secondary" id="refreshPageButton" onclick="javascript:location.reload();">Select other Project</button>
+					</div>
+				</div>
+			</div>
+			<div class="card-footer">
+			</div>
+		</div>
+		
+		<div class="d-none" id="assembleSuccess">
+			<div class="alert alert-success text-center" id="assembleSuccessAlert"></div>
+		</div>
+		
+		<div class="container-fluid card" id="allocatedProductsToProject">
+			<div class="card-header">
+				<div class="row">
+					<div class="col-md-7">
+						<h5 class="d-flex align-items-center card-title">Allocated Main Products to the Project</h5>
+					</div>
+					<div class="col-md-5">
+						<div class="row text-secondary">
+							<div class="col-sm-6">Requested Products</div>
+							<div class="col-sm-2" id="requiredCount"></div>
+						</div>
+						<div class="row text-secondary">
+							<div class="col-sm-6">Allocated Products</div>
+							<div class="col-sm-1" id="allocatedCount"></div>
+						</div>
+						<div class="row text-info">
+							<div class="col-sm-6">Needed Quantity</div>
+							<div class="col-sm-2" id="balanceCount"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="card-body" id="allocatedProductsToProjectBody">
+				<table class="table">
+					<thead>
+						<th scope="col">Serial Number</th>
+						<th scope="col">Product Name</th>
+						<th scope="col">Product Type</th>
+					</thead>
+					<tbody id="allocatedProductsToProjectBodyTableBody">
+					</tbody>
+				</table>
+			</div>
+			<div class="card-footer">
+				<hr/>
+				<button type="button" class="btn btn-success" id="sendToReview">Send to review</button>
+			</div>
+		</div>
+		<div class="alert alert-info text-center d-none" id="sameProjectAlert">This product is already allocated to this project. You can keep assembling. ;-)</div>
+		<div class="alert alert-success text-center d-none" id="allocatedToProjectAlert">
+			Successfully added to the Project.
+		</div>
+		<div class="alert alert-warning text-center d-none text-secondary" id="allocatedToProjectAlertWarning">
+			Scanned product is NOT IN THE WORKSHOP or ALLOCATED TO PROJECT. You can't allocate this product to the project. 
+		</div>
+		<!-- --------------------------- Search Product Form --------------------- -->
+		<div class="container-fluid mt-3 mb-5 card p-3" id="assembleDiv">
+		  <div class="h5 mb-3">Allocate to the project and Start assembling <strong>main product</strong> </div>
+		  <form class="form-inline" onsubmit="return false;">
+			  <div class="row">
+			    <div class="col-8">
+			      <input type="text" id="searchSerial" name="searchSerial" class="form-control" autofocus="autofocus" required>
+			    </div>
+			    <div class="col-sm">
+			      <button type="button" class="btn btn-primary" id="searchProduct">start assemble</button>
+			    </div>
+			  </div>
+		  </form>
+		</div>
+		
+		<div class="d-none" id="sameProductError">
+			<div class="alert alert-warning text-center text-secondary">
+				Selected product Serial Number is Same as the Main product. I got You ;-)
+			</div>
+		</div>
+		<div class="d-none" id="assembleProductSearchError">
+			<div class="alert alert-danger text-center">
+				Requested Product is Assembled or in Inventory: <strong> Contact Keeper for support.</strong>
+			</div>
+		</div>
+						
+		<!-- ------------------------- Product Details display ----------------------- -->
+		<div class="container-fluid card mt-3" >
+			<div class="row" id="allDetailsRow">
+				<div class="d-none col" id="productDetailsTable">
+					<div class="p-3">
+						<h3 class="d-inline">Product Details: </h3>
+						<h4 id="headingSerial" class="d-inline"></h4>
+					</div>
+					<table class="table">
+					  <tbody>
+					    <tr>
+					      <td>Serial Number</td>
+					      <td id="serialNumber"></td>
+					    </tr>
+					    <tr>
+					      <td>Product Name</td>
+					      <td id="productName"></td>
+					    </tr>
+					    <tr>
+					      <td>Description</td>
+					      <td id="description"></td>
+					    </tr>
+					    <tr>
+					      <td>Product Type</td>
+					      <td id="type"></td>
+					    </tr>
+					    <tr>
+					      <td>Product Status</td>
+					      <td id="status"></td>
+					    </tr>
+					  </tbody>
+					</table>
+					<table class="table" id="allocateProductDetailsTable">
+						<tbody>
+							<tr>
+								<td>Allocated Product Serial</td>
+								<td id="allocatedProductSerialNumberData"></td>
+							</tr>
+							<tr>
+								<td>Allocated Product Name</td>
+								<td id="allocatedProductNameData"></td>
+							</tr>
+						</tbody>
+					</table>
+					<form class="form mb-3" id="assembleProductInputForm" onSubmit="return false;">
+						<div class="row">
+							<div class="col">
+								<input type="text" class="form-control" name="searchforAssemble" id="searchForAssemble" placeholder="Scan the Serial Number"/>
+							</div>
+							<div class="col-sm">
+								<button type="button" class="btn btn-primary" id="assembleProduct">Assemble</button>
+							</div>
+						</div>
+					</form>
+				</div>
+				<!-- ------------------ Assembled product Details ------------------ -->
+				<div class="d-none col" id="assembledDetails">
+					<div class="mt-3">
+						<h3>Assembled Products</h3>
+					</div>
+					<table class="table">
+						<tbody id="assembleDetailsTableBody">
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+    <div th:replace="fragments/footer :: footer">..</div>
+    </div>
+  </div>
+	
+    <div th:insert="fragments/scripts :: scripts(~{::script})">
+      <script type="text/javascript" src="/js/productAssemble.js"></script>
+	</div>
+	
+  </body>
+</html>

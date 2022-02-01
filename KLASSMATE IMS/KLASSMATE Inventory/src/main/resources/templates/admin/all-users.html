@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments/head :: head(~{::title}, ~{})">
+	<title>All Users Details :: KLIMS</title>
+</head>
+
+<body class="">
+  <div class="wrapper ">
+  <!-- ---------------------- Navigation content -------------------------- -->
+    <div th:insert="fragments/sidebar :: sidebar(active='allUsers')"></div>
+    <div class="main-panel">
+     <!-- Navbar -->
+     <div th:insert="fragments/navbar(title='All Users Details')"></div>
+     
+    <div class="content">
+    	<div class="alert alert-success text-center d-none" id="adminSuccess">Successfully created the Administrator</div>
+    	<div class="alert alert-danger text-center d-none" id="adminError">Error in registration of Admin. Contact Developer 😄</div>
+    	
+    	<div class="container-fluid card" sec:authorize="hasAuthority('ADMIN')">
+    		<div class="card-header">
+    			<h3 class="card-title">Administrators</h3>
+    			<h6 class="category">register new administrators in to the system.</h6>
+    		</div>
+    		<div class="card-body">
+    			<form onsubmit="javascript:return false;">
+    			  <div class="row">
+	    			  <div class="form-group col-md-5">
+					    <label for="username">Username</label>
+					    <input type="text" class="form-control" id="username" aria-describedby="usernameHelp" required>
+					    <small id="usernameHelp" class="form-text text-muted">username should be unique. choose a unique name.</small>
+					  </div>
+					  <div class="form-group col-md-7">
+					    <label for="name">Name in full</label>
+					    <input type="text" class="form-control" id="name" required>
+					  </div>    			  
+    			  </div>
+    			  <div class="row">
+					  <div class="form-group col-md-6">
+					    <label for="desgination">Designation</label>
+					    <input type="text" class="form-control" id="designation" required>
+					  </div>
+					  <div class="form-group col-md-6">
+					    <label for="email">Email address</label>
+					    <input type="email" class="form-control" id="email" required>
+					  </div>
+    			  </div>
+    			  <div class="row">
+					  <div class="form-group col-md-6">
+					    <label for="password">Password</label>
+					    <input type="password" class="form-control" id="password" required>
+					  </div>
+					  <div class="form-group col-md-6">
+					    <label for="repassword">Re Enter Password</label>
+					    <input type="password" class="form-control" id="repassword" required>
+					  </div>
+					  <div class="col-md-12">
+					  	<p class="text-danger text-center d-none" id="passwordIncorrect">Passwords are not compatible</p>
+					  </div> 
+    			  </div>
+				  <button type="submit" class="btn btn-primary" id="submitButton" >Submit</button>
+				  <button type="reset" class="btn btn-danger">reset</button>
+				</form>
+    		</div>
+    		<div class="card-footer"></div>
+    	</div>
+    	
+    	<div class="alert alert-success text-center d-none" id="deleteSuccess">Successfully deleted the user.</div>
+    	<div class="alert alert-danger text-center d-none" id="deleteError">Error in deletion. Contact the Developer..</div>
+    	
+    	<div class="container-fluid card mt-5 pt-3">
+			<div class="card-header row">
+				<div class="col-md-8">
+					<h3 class="card-title">All User Details</h3>
+				</div>
+				<div class="col-md-4">
+					<form class="form">
+						<input type="text" class="form-control" id="userSearch" placeholder="Enter username to search"/>
+					</form>
+				</div>
+			</div>
+			<div class="card-body">
+				<table class="table mt-4 mb-3" id="allUsersDetails">
+				  <thead class="thead-light">
+				    <tr>
+				      <th scope="col">Username</th>
+				      <th scope="col">Name</th>
+				      <th scope="col">Email</th>
+				      <th scope="col">Designation</th>
+				      <th scope="col">Role</th>
+				      <th scope="col">Action</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				  	<tr th:if="${#lists.size(userDetails) == 0}">
+				  		<td colspan="5" class="text-danger text-center"> -- No Data Available -- </td>
+				  	</tr>
+				    <tr th:each="user:${userDetails}" th:unless="${#lists.size(userDetails) == 0 }" th:if="${!#strings.equals(user.username, username)}">
+				      <th scope="row" th:text="${user.username}"></th>
+				      <td th:text="${user.name}"></td>
+				      <td th:text="${user.email}"></td>
+				      <td th:text="${user.designation}"></td>
+				      <td th:text="${user.role}"></td>
+				      <td th:id="${user.id}" th:name="${user.username}">
+				      	<button class="btn btn-warning">Remove User</button>
+				      </td>
+				    </tr>
+				  </tbody>
+				</table>
+				<table class="table mt-4 mb-3" id="selectedUsersDetails">
+				  <thead class="thead-light">
+				    <tr>
+				      <th scope="col">Username</th>
+				      <th scope="col">Name</th>
+				      <th scope="col">Email</th>
+				      <th scope="col">Designation</th>
+				      <th scope="col">Role</th>
+				      <th scope="col">Action</th>
+				    </tr>
+				  </thead>
+				  <tbody id="selectedUserDetailsTableBody">
+				  	
+				  </tbody>
+				</table>
+			</div>
+		</div>
+      </div>
+      <div th:replace="fragments/footer :: footer">..</div>
+    </div>
+  </div>
+  
+  <div th:insert="fragments/scripts :: scripts(~{::script})">
+	  <script src="../js/allUsers.js" type="text/javascript"></script>
+	</div>
+ 
+ </body>
+
+</html>

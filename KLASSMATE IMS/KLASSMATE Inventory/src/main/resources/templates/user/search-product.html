@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments/head :: head(~{::title}, ~{})">
+	<title>Search Product :: KLIMS</title>
+</head>
+
+<body class="">
+  <div class="wrapper ">
+  <!-- ---------------------- Navigation content -------------------------- -->
+    <div th:insert="fragments/sidebar :: sidebar(active='search-product')"></div>
+    <div class="main-panel">
+      <!-- Navbar -->
+      <div th:insert="fragments/navbar(title='Search for a Product')"></div>
+      
+      <div class="content">
+	
+		<div th:if="${param.AssmbleToError}">
+			<div class="alert alert-danger text-center">
+				Requested Assembling Product is Empty.
+			</div>
+		</div>
+		
+		<div class="d-none" id="productSearchError">
+			<div class="alert alert-danger text-center">
+				<span id="errorStatus" class="fw-bold"></span>
+			</div>
+		</div>
+		
+		<!-- --------------------------- Search Product Form --------------------- -->
+		<div class="container-fluid mt-5 mb-5 card p-5">
+		  <div class="h3">Search for a product</div>
+		  <form class="form-inline" onsubmit="return false;">
+			  <div class="row">
+			    <div class="col-8">
+			      <input type="text" class="form-control" id="searchSerial" name="searchSerial" placeholder="Scan Serial Number" autofocus="autofocus" required>
+			    </div>
+			    <div class="col">
+			      <button type="button" class="btn btn-primary" id="searchProduct">Search Product</button>
+			    </div>
+			  </div>
+		  </form>
+		</div>
+		
+		<!-- ------------------------- Product Details display ----------------------- -->
+		<div class="container-fluid card rounded" >
+			<div class="d-none" id="productDetailsTable">
+				<div class="p-3">
+					<h3 class="d-inline">Product Details: </h3>
+					<h4 id="headingSerial" class="d-inline"></h4>
+					
+				</div>
+				<table class="table">
+				  <tbody>
+				    <tr>
+				      <td>Serial Number</td>
+				      <td id="serialNumber"></td>
+				    </tr>
+				    <tr>
+				      <td>Product Name</td>
+				      <td id="productName"></td>
+				    </tr>
+				    <tr>
+				      <td>Description</td>
+				      <td id="description"></td>
+				    </tr>
+				    <tr>
+				      <td>Product Type</td>
+				      <td id="type"></td>
+				    </tr>
+				    <tr>
+				      <td>Product Status</td>
+				      <td id="status"></td>
+				    </tr>
+				  </tbody>
+				</table>
+				<div id="allocateProductDetailsTable" class="d-none" >
+					<table class="table">
+						<tbody>
+							<tr>
+						    	<td>Allocated Product Serial Number</td>
+						    	<td id="allocatedProductSerialNumberData"></td>
+						    </tr>
+						    <tr>
+						    	<td>Allocated Product Name</td>
+						    	<td id="allocatedProductNameData"></td> 
+						    </tr>
+						</tbody>
+					</table>			
+				</div>
+			</div>
+			<!-- ------------------ Assembled product Details ------------------ -->
+			<div class="d-none" id="assembledDetails">
+				<div class="p-3">
+					<h3>Assembled Products</h3>
+				</div>
+				<table class="table">
+					<tbody id="assembleDetailsTableBody">
+				  </tbody>
+				</table>
+			</div>
+		</div>
+	  </div>
+      <div th:replace="fragments/footer :: footer">..</div>
+    </div>
+  </div>
+  
+   <div th:insert="fragments/scripts :: scripts(~{::script})">
+      <script type="module" src="/js/searchProduct.js"></script>
+	</div>
+	
+  </body>
+</html>

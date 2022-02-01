@@ -1,0 +1,137 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+	<div class="sidebar" data-color="white" data-active-color="danger" th:fragment="sidebar(active)">
+	     <div class="logo">
+	       <a class="simple-text logo-mini">
+	         <div class="logo-image-small">
+	           <img src="../assets/img/logo-small.png">
+	         </div>
+	    </a>
+	    <a href="/user-details" class="simple-text logo-normal" th:text="${'Hello ' + username}" th:href="@{/user-details}"></a>
+	  </div>
+	  <div class="sidebar-wrapper">
+	    <ul class="nav">
+	      <li sec:authorize="hasAuthority('ADMIN')" th:class="${active == 'admin-home'? 'active': ''}">
+	        <a href="admin-home">
+	          <i class="nc-icon nc-bank"></i>
+	          <p>Dashboard</p>
+	        </a>
+	      </li>
+	      <li sec:authorize="hasAuthority('WORKSHOP_ADMIN')" th:class="${active == 'workshop-admin-home' ? 'active' : ''}">
+	        <a href="workshop-admin-home">
+	          <i class="nc-icon nc-bank"></i>
+	          <p>Dashboard</p>
+	        </a>
+	      </li>
+	      <li sec:authorize="hasAuthority('KEEPER')" th:class="${active == 'keeper-home'? 'active': ''}">
+	        <a href="keeper-home">
+	          <i class="nc-icon nc-bank"></i>
+	          <p>Dashboard</p>
+	        </a>
+	      </li>
+	      <li sec:authorize="hasAuthority('WORKSHOP_USER')" th:class="${active == 'user-home' ? 'active' : ''}">
+	        <a href="user-home">
+	          <i class="nc-icon nc-bank"></i>
+	          <p>Dashboard</p>
+	        </a>
+	      </li>
+	      <li sec:authorize="hasAuthority('WORKSHOP_ADMIN')" th:class="${active == 'approve-projects'? 'active' : ''}">
+	        <a href="/approve-projects">
+	          <i class="nc-icon nc-bookmark-2"></i>
+	          <p>Approve Projects</p>
+	        </a>
+	      </li>
+	      <li sec:authorize="hasAuthority('WORKSHOP_ADMIN')" th:class="${active == 'review-projects'? 'active' : ''}">
+	        <a href="/review-projects">
+	          <i class="nc-icon nc-settings"></i>
+	          <p>Review Projects</p>
+	        </a>
+	      </li>
+	      <li th:class="${active == 'projects'? 'active' : ''}">
+	        <a href="/projects">
+	          <i class="fa fa-cubes" aria-hidden="true"></i>
+	          <p>Projects</p>
+	        </a>
+	      </li>
+	      <li sec:authorize="hasAuthority('KEEPER')" th:class="${active == 'add-new-product' ? 'active': ''}">
+	      	<a th:href="@{/add-new-product}">
+	      		<i class="nc-icon nc-bulb-63"></i>
+	      		<p>Add New Product</p>
+	      	</a>
+	      </li>
+	      <li sec:authorize="hasAuthority('WORKSHOP_USER')" th:class="${active == 'product-assemble' ? 'active': ''}">
+	        <a th:href="@{/product-assemble}">
+	          <i class="nc-icon nc-settings"></i>
+	          <p>Assemble Product</p>
+	        </a>
+	      </li>
+	      <li sec:authorize="hasAuthority('WORKSHOP_USER')" th:class="${active == 'product-repair' ? 'active' : ''}">
+	        <a th:href="@{/product-repair}">
+	          <i class="nc-icon nc-refresh-69"></i>
+	          <p>Repair Product</p>
+	        </a>
+	      </li>
+	      <li th:class="${active == 'product-type'? 'active': ''}">
+	      	<a th:href="@{/product-types}">
+	      		<i class="nc-icon nc-basket"></i>
+	      		<p>product Categories</p>
+	      	</a>
+	      </li>
+	      <li sec:authorize="hasAuthority('ADMIN') || hasAuthority('WORKSHOP_ADMIN')" th:class="${active == 'allUsers'? 'active': ''}">
+	      	<a th:href="@{/all-users}">
+	      		<i class="fa fa-users" aria-hidden="true"></i>
+	      		All Users Details
+	      	</a>
+	      </li>
+	      <li th:class="${active == 'search-product' ? 'active' : ''}">
+	        <a th:href="@{/search-product}">
+	          <i class="nc-icon nc-zoom-split"></i>
+	          <p>Search Product</p>
+	        </a>
+	      </li>
+	      <li th:class="${active == 'inventory'? 'active': ''}">
+	      	<a th:href="@{/inventory}">
+	      		<i class="nc-icon nc-app"></i>
+	      		<p>Inventory</p>
+	      	</a>
+	      </li>
+	      <li th:class="${active == 'workshop-inventory'? 'active': ''}">
+	      	<a th:href="@{/workshop-inventory}">
+	      		<i class="nc-icon nc-box-2"></i>
+	      		<p>Workshop Inventory</p>
+	      	</a>
+	      </li>
+	      <li th:class="${active== 'allocated'? 'active': ''}">
+	      	<a th:href="@{/allocated-products}">
+	      		<i class="nc-icon nc-bag-16"></i>
+	      		<p>Allocated Products</p>
+	      	</a>
+	      </li>
+	      <li th:class="${active == 'finished-products' ? 'active': ''}">
+	      	<a th:href="@{/finished-products}">
+	      		<i class="nc-icon nc-briefcase-24"></i>
+	      		<p>Finished Products</p>
+	      	</a>
+	      </li>
+	      <li th:class="${active == 'all-products'? 'active' : ''}">
+	      	<a th:href="@{/all-products}">
+	      		<i class="fa fa-shopping-cart" aria-hidden="true"></i>
+	      		<p>All Products</p>
+	      	</a>
+	      </li>
+	      <li th:class="${active == 'user-details' ? 'active': ''}">
+	        <a th:href="@{/user-details}">
+	          <i class="nc-icon nc-single-02"></i>
+	          <p>User Profile</p>
+	        </a>
+	      </li>
+	      <li th:class="${active == '' ? 'active': ''}">
+	        <a th:href="@{/logout}">
+	          <i class="nc-icon nc-button-power"></i>
+	          <p>Log Out</p>
+	        </a>
+	      </li>          
+	    </ul>
+	  </div>
+	</div>
+</html>

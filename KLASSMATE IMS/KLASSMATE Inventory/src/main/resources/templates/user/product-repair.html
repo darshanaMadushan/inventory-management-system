@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments/head :: head(~{::title}, ~{})">
+	<title>Product Repairs :: KLIMS</title>
+</head>
+
+<body>
+  <div class="wrapper ">
+  <!-- ---------------------- Navigation content -------------------------- -->
+    <div th:insert="fragments/sidebar :: sidebar(active='product-repair')"></div>
+    <div class="main-panel">
+      <!-- Navbar -->
+      <div th:insert="fragments/navbar(title='Product Repairs')"></div>
+      <!-- End Navbar -->
+      <div class="content">
+		<div class="container-fluid card">
+			<div class="card-header">
+				<h3 class="card-title">Product repairs</h3>
+			</div>
+			<div class="card-body">
+				<form class="form" onsubmit="return false;">
+					<input class="form-control" placeholder="scan barcode of Main Product" id="barcodeScanInput"/>
+				</form>
+			</div>
+			<div class="card-footer"></div>
+		</div>
+		
+		<div class="d-none" id="assembleSuccessAlert">
+			<div class="alert alert-success text-center">
+				Successfully Assembled
+			</div>
+		</div>
+		<div class="d-none" id="assembleErrorAlert">
+			<div class="alert alert-danger text-center">
+				Product is not available at the Workshop.
+			</div>
+		</div>
+		<div class="d-none" id="removeProductErrorAlert">
+			<div class="alert alert-danger text-center" id="removeProductErrorAlertContent"></div>
+		</div>
+		<div class="d-none" id="removeProductSuccessAlert">
+			<div class="alert alert-success text-center">
+				Success: Item Removed from Main Product
+			</div>
+		</div>
+		
+		<div class="d-none" id="assembleProductResponse">
+			<div class="alert text-center" id="assembleProductResponseAlert">
+				<span id="assembleProductResponseDetail"></span>
+			</div>
+		</div>
+		
+		<div class="container-fluid card justify-content-center" id="mainContainer">
+			<div class="card-header" id="productDetailsCol">
+				<h3 class="card-title">Product Details</h3>
+			</div>
+			<div class="card-body">
+				<div id="productDetailsTable">
+					<table class="table" id="productDetailsTable">
+					  <thead>
+					    <tr>
+					      <th scope="col" class="text-center">Serial Number</th>
+					      <th scope="col">Product Details</th>
+					      <th scope="col">Project</th>
+					      <th scope="col"></th>
+					      <th scope="col"></th>
+					    </tr>
+					  </thead>
+					  <tbody>
+					    <tr>
+					      <th scope="row" class="text-center" id="productDetailsSerialNumber"></th>
+					      <td id="productDetailsProductName"></td>
+					      <td id="productDetailsProject"></td>
+					      <td id="productDetailsDescription"></td>
+					      <td id="productDetailsStatus"></td>
+					    </tr>
+					    <tr>
+					    	<td colspan="4" class="text-center text-danger">
+					    		--- No data available ---
+					    	</td>
+					    </tr>
+					  </tbody>
+					</table>
+				</div>
+				
+				<div class="alert alert-success text-center d-none" id="replacingSuccess">Successfully replaced!</div>
+				<div class="alert alert-danger text-center d-none" id="replacingError"></div>
+				
+				<div class="row" id="addAndRemoveProductSection">
+					<div class="mt-3 mb-3" id="addProductField">
+				      <form class="form m-3" onsubmit="return false;">
+					      <div class="row">
+				      		<div class="col-8">
+						      	<input type="text" class="form-control" id="insertProductField" placeholder="scan serial to add more"/>
+						      	<small class="text-danger d-none" id="insertProductFieldAlert">Please scan the assembling product Serial Number</small>
+				      		</div>
+				      		<div class="col">
+						      	<button class="btn btn-primary" id="assembleIntoButton">Assemble into product</button>
+				      		</div>
+					      </div>
+				      </form>
+				    </div>
+				</div>
+				<div id="assembleDetailsRow"></div>
+			</div>
+			<div class="card-footer"></div>
+		</div>
+	 </div>
+      <div th:replace="fragments/footer :: footer">..</div>
+    </div>
+  </div>
+  
+    <div th:insert="fragments/scripts :: scripts(~{::script})">
+      <script type="text/javascript" src="/js/productRepair.js"></script>
+	</div>
+  </body>
+</html>

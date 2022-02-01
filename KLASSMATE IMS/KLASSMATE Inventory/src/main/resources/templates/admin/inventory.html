@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments/head :: head(~{::title}, ~{})">
+	<title>Inventory :: KLIMS</title>
+</head>
+
+<body class="">
+  <div class="wrapper ">
+  <!-- ---------------------- Navigation content -------------------------- -->
+    <div th:insert="fragments/sidebar :: sidebar(active='inventory')"></div>
+    <div class="main-panel">
+    <!-- Navbar -->
+      <div th:insert="fragments/navbar(title='Inventory Details')"></div>
+      <!-- End Navbar -->
+   <div class="content">
+   
+	<div class="alert alert-success text-center d-none" id="projectSentToWorkshopSuccess">Project Sent to the Workshop Successfully. <strong>You will be directed to the Projects Page..</strong></div>
+	<div class="alert alert-danger text-center d-none" id="projectSentToWorkshopError">Project Transformation error.. Contact Admin for more details.</div>
+      
+	<!-- ----------------------- Project Details Div ------------------------- -->
+	<div class="card container-fluid" th:if="${param.allocateProducts}">
+		<div class="card-header">
+			<h5 class="card-title" id="cardTitle"></h5>
+			<input th:value="${param.allocateProducts}" id="projectId" type="hidden"/>
+		</div>	
+		<div class="card-body">
+			<table class="table">
+			  <thead>
+			    <tr>
+			      <th scope="col">Project Name</th>
+			      <th scope="col">Description</th>
+			      <th scope="col">Quantity</th>
+			      <th scope="col"></th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <td id="projectName"></td>
+			      <td id="projectDescription"></td>
+			      <td id="projectQuantity"></td>
+			      <td>
+			      	<button class="btn btn-primary" id="sendToWorkshopButton">Complete product allocation</button>
+				  </td>
+			    </tr>
+			  </tbody>
+			</table>
+		</div>
+		<div class="card-footer">
+			<p class="text-info" id="descriptionForProject"></p>
+		</div>
+	</div>
+			
+	<div class="container card">
+		<div class="card-header">
+			<h5 class="card-title">Scan and Proceed.. </h5>
+		</div>
+		<div class="card-body">
+			<div class="row">
+				<div class="col-md-9">
+					<form class="form" onsubmit="javascript: return false;">
+						<input type="text" class="form-control" placeholder="scan the barcode of product" id="scanInput" />
+					</form>
+				</div> 
+				<div class="col-md-3">
+					<a class="btn btn-info" id="scanSendToWorkshop">Send to Workshop</a>
+				</div>
+			</div>
+			<table class="table">
+			  <tbody>
+			    <tr>
+			      <th scope="row">Serial Number</th>
+			      <td id="scannedProductSerialNumber">Serial input is empty</td>
+			    </tr>
+			    <tr>
+			      <th scope="row">Product Name</th>
+			      <td id="scannedProductName">Serial input is empty</td>
+			    </tr>
+			    <tr>
+			      <th scope="row">Product Type</th>
+			      <td id="scannedProductType">Serial input is empty</td>
+			    </tr>
+			  </tbody>
+			</table>
+		</div>
+	</div>
+	
+	<!-- ---------------------------------------------------- Available Quantity Page ---------------------------------------------------------------------- -->
+		<div class="container-fluid mt-5 card border-success">
+			<div class="card-header">
+			  <div class="row">
+			   <div class="col-md-8">
+				<h5 class="card-title">Available Products In Inventory</h5>
+			   </div>
+			   <div class="col-md-4">
+			   	<select id="prodctCategorySelect" class="form-select">
+			   		<option value="">--Select Category To Sort--</option>
+			   		<option th:each="category : ${categories}" th:value="${category.serial}" th:text="${category.categoryName}"></option> 
+			   	</select>
+			   </div>
+			  </div>
+			</div>
+			<div class="card-body">
+				<table class="table" id="allDetailsTable">
+				  <thead class="thead-dark">
+				    <tr>
+				      <th scope="col">Serial Number</th>
+				      <th scope="col">Name</th>
+				      <th scope="col">Description</th>
+				      <th scope="col">Category</th>
+				      <th scope="col" sec:authorize="hasAuthority('KEEPER') || hasAuthority('ADMIN')">Action</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				  	<tr th:if="${#lists.size(products) == 0}">
+				  		<td colspan="5" class="text-danger text-center"> -- No Data Available -- </td>
+				  	</tr>
+				    <tr th:each="product: ${products}" th:unless="${#lists.size(products) == 0}">
+				      <th scope="row" th:text="${product.serialNumber}"></th>
+				      <td th:text="${product.productName}"></td>
+				      <td th:text="${product.description}"></td>
+				      <td th:text="${product.type.serial + ' - ' + product.type.categoryName}"></td>
+				      <td sec:authorize="hasAuthority('KEEPER') || hasAuthority('ADMIN')" th:id="${product.serialNumber}">
+				      	<button class="btn btn-success">Send to Workshop</button>
+				      </td>
+				    </tr>
+				  </tbody>
+				</table>
+				<table class="table" id="sortedTable">
+				  <thead class="thead-dark">
+				    <tr>
+				      <th scope="col">Serial Number</th>
+				      <th scope="col">Name</th>
+				      <th scope="col">Description</th>
+				      <th scope="col">Category</th>
+				      <th scope="col" sec:authorize="hasAuthority('KEEPER') || hasAuthority('ADMIN')">Action</th>
+				    </tr>
+				  </thead>
+				  <tbody id="sortedTableBody">
+				  	
+				  </tbody>
+				</table>
+			</div>
+			<div class="card-footer"></div>
+		</div>
+	</div>
+	
+	<div th:replace="fragments/footer :: footer">..</div>
+    </div>
+  </div>
+  
+   <div th:insert="fragments/scripts :: scripts(~{::script})">
+   	<script type="text/javascript" src="../js/inventory.js"></script>
+   </div>
+  </body>
+</html>

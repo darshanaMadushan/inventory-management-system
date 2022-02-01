@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments/head :: head(~{::title}, ~{})">
+	<title>Wrokshop Admin Dashboard :: KLIMS</title>
+</head>
+
+<body class="">
+  <div class="wrapper ">
+  <!-- ---------------------- Navigation content -------------------------- -->
+    <div th:insert="fragments/sidebar :: sidebar(active='workshop-admin-home')"></div>
+    <div class="main-panel">
+    <!-- Navbar -->
+      <div th:insert="fragments/navbar(title='Workshop Admin Dashboard')"></div>
+      <!-- End Navbar -->
+      <div class="content">
+        
+        <div class="alert alert-warning text-center text-secondary" role="alert" th:if="${#lists.size(urgentProjectApprove) > 0}">
+        	AN URGENT PROJECT HAS CAME TO GET THE APPROVAL
+        	<a th:href="@{/approve-projects?urgent}">Check details</a>
+       	</div>
+        
+        <div class="alert alert-warning text-center text-secondary" role="alert" th:if="${urgentProjectReview > 0}">
+        	AN URGENT PROJECT HAS CAME TO REVIEW
+        	<a th:href="@{/review-projects?urgent}">Check details</a>
+       	</div>
+        
+        <div class="row">
+          <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-stats">
+              <div class="card-body ">
+                <div class="row">
+                  <div class="col-5 col-md-3">
+                    <div class="icon-big text-center icon-warning">
+                      <i class="nc-icon nc-money-coins text-warning"></i>
+                    </div>
+                  </div>
+                  <div class="col-7 col-md-9">
+                    <div class="numbers">
+                      <p class="card-category">Projects Need Approval</p>
+                      <p class="card-title" th:text="${#lists.size(allProjects)}" id="userCount"><p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer ">
+                <hr>
+                <div class="stats">
+                 <a th:href="@{/all-users}">
+                  <i class="nc-icon nc-spaceship text-info"></i>
+                  View Details
+                 </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-stats">
+              <div class="card-body ">
+                <div class="row">
+                  <div class="col-5 col-md-4">
+                    <div class="icon-big text-center icon-warning">
+                      <i class="nc-icon nc-box-2 text-success"></i>
+                    </div>
+                  </div>
+                  <div class="col-7 col-md-8">
+                    <div class="numbers">
+                      <p class="card-category">Projects to Review</p>
+                      <p class="card-title" th:text="${projectsToReview}"><p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer ">
+                <hr>
+                <div class="stats">
+                 <a th:href="@{/review-projects}">
+                  <i class="nc-icon nc-spaceship text-info"></i>
+                  View Details
+                 </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-stats">
+              <div class="card-body ">
+                <div class="row">
+                  <div class="col-5 col-md-4">
+                    <div class="icon-big text-center icon-warning">
+                      <i class="nc-icon nc-user-run text-danger"></i>
+                    </div>
+                  </div>
+                  <div class="col-7 col-md-8">
+                    <div class="numbers">
+                      <p class="card-category">High Priority Projects</p>
+                      <p class="card-title" th:text="${highPriorityProjects}"><p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer ">
+                <hr>
+                <div class="stats">
+	                <a href="/projects?highPriority">
+	                  <i class="nc-icon nc-spaceship text-info" aria-hidden="true"></i>
+	                  View Projects
+	                </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-stats">
+              <div class="card-body ">
+                <div class="row">
+                  <div class="col-5 col-md-4">
+                     <div class="icon-big text-center icon-warning">
+                     <i class="nc-icon nc-book-bookmark text-primary"></i>
+                    </div>
+                  </div>
+                  <div class="col-7 col-md-8">
+                    <div class="numbers">
+                      <p class="card-category">Product Categories</p>
+                      <p class="card-title" th:text="${categoriesCount}"><p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer ">
+                <hr>
+                <div class="stats">
+                	<a th:href="@{product-types}">
+                  		<i class="nc-icon nc-spaceship text-info"></i>
+                  		View Categories
+	                </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+     	<div class="row">
+     	  <div class="col-md-12">
+            <div class="card card-chart">
+              <div class="card-header ">
+                <h5 class="card-title">Products Behavior</h5>
+                <p class="card-category">No. of operations done in the system</p>
+              </div>
+              <div class="card-body ">
+                <canvas id="productAssemblingChart" width="100" height="25"></canvas>
+              </div>
+              <div class="card-footer ">
+                <hr>
+                <div class="stats">
+                  <i class="fa fa-history"></i> Updated <span id="chartCount"></span> minute ago
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>   
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card ">
+              <div class="card-header ">
+                <h5 class="card-title">Products</h5>
+                <p class="card-category">Products count on status wise</p>
+              </div>
+              <div class="card-body ">
+                <canvas id="productStatusChart" width="400" height="350"></canvas>
+              </div>
+              <div class="card-footer ">
+                <hr>
+                <div class="stats">
+                 <a th:href="@{/all-products}">
+                  <i class="nc-icon nc-spaceship text-info"></i>View all products details
+                 </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card ">
+              <div class="card-header ">
+                <h5 class="card-title">Projects</h5>
+                <p class="card-category">Projects Statuses in the KLASSMATE</p>
+              </div>
+              <div class="card-body ">
+                 <canvas id="projectsStatisticsRadar" width="150" height="70"></canvas>
+              </div>
+              <div class="card-footer ">
+                <hr>
+                <div class="stats">
+                 <a th:href="@{/projects}">
+                  <i class="nc-icon nc-spaceship text-info"></i> View In Detail
+                 </a>
+                </div>              
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div th:replace="fragments/footer :: footer"></div>
+    </div>
+  </div>
+  
+  <div th:insert="fragments/scripts :: scripts(~{::script})">
+	  <!-- Chart JS -->
+	  <script src="../assets/js/plugins/chartjs.min.js"></script>
+
+	  <!--  Notifications Plugin    -->
+	  <script src="../assets/js/plugins/bootstrap-notify.js"></script>
+	  
+	  <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
+	  <script src="../assets/js/paper-dashboard.js?v=2.0.0" type="text/javascript"></script>
+	  
+	  <script type="module" src="../js/workshopAdminHome.js"></script>
+	  
+  </div>
+  
+  
+</body>
+
+</html>

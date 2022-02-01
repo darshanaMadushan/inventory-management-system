@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments/head :: head(~{::title}, ~{})">
+	<title>Projects :: KLIMS</title>
+</head>
+
+<body class="">
+  <div class="wrapper ">
+  <!-- ---------------------- Navigation content -------------------------- -->
+    <div th:insert="fragments/sidebar :: sidebar(active='projects')"></div>
+    <div class="main-panel">
+
+      <div th:insert="fragments/navbar(title='Projects')"></div>
+
+      <div class="content">
+      	<div th:if="${param.success}">
+      		<div class="alert alert-success text-center">Successfully sent to approval by Workshop Admin</div>
+      	</div>
+      	<div th:if="${param.internal}">
+      		<div class="alert alert-danger text-center">Internal Server Error(500) : contact ADMIN </div>
+      	</div>
+      	
+      	<div class="d-none alert text-center" id="removeResponse"></div>
+      	
+		<div class="container-fluid card" th:if="${param.highPriority}">
+			<div class="card-header">
+				<h5>High Priority projects in KLIMS</h5>
+			</div>
+			<div class="card-body">
+				<table class="table">
+				  <thead>
+				    <tr>
+				      <th scope="col">Project Name</th>
+				      <th scope="col">Description</th>
+				      <th scope="col">Quantity</th>
+				      <th scope="col">Due Date</th>
+				      <th scope="col">Status</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				  	<tr th:if="${#lists.size(highPriorityProjects) == 0 }">
+				  		<td colspan="5" class="text-danger text-center">-- No Data Available -- </td>
+				  	</tr>
+				    <tr th:each="high: ${highPriorityProjects}">
+				      <th scope="row" th:text="${high.name}"></th>
+				      <td th:text="${high.description}"></td>
+				      <td th:text="${high.quantity}"></td>
+				      <td th:text="${high.dueDate}"></td>
+				      <td th:text="${high.status}"></td>
+				    </tr>
+				  </tbody>
+				</table>
+			</div>
+		</div>
+		
+		<div class="container-fluid card" sec:authorize="hasAuthority('WORKSHOP_USER')" id="revertedProjects" th:if="${param.urgentRevert}">
+			<div class="card-header">
+				<h5 class="card-title">Reverted Urgent Projects</h5>
+				<p class="card-category">Reverted Urgent Projects by reviewed WORKSHOP USERS</p>
+			</div>
+			<div class="card-body">
+				<table class="table">
+				  <thead>
+				    <tr>
+				      <th scope="col">Project Name</th>
+				      <th scope="col">Rejection Reason</th>
+				      <th scope="col">Rejected By</th>
+				      <th scope="col">Due Date</th>
+				      <th scope="col">Action</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr th:each="project : ${revertedUrgentProjects}">
+				      <th scope="row" th:text="${project.name}"></th>
+				      <td th:text="${project.rejectionReason}"></td>
+				      <td th:text="${project.user.username}"></td>
+				      <td th:text="${project.dueDate}"></td>
+				      <td th:id="${project.projectId}">
+				      	<button class="btn btn-info">Check the project</button>
+				      </td>
+				    </tr>
+				  </tbody>
+				</table>
+			</div>
+			<div class="card-footer"></div>
+		</div>
+		
+		<div class="container-fluid card" sec:authorize="hasAuthority('WORKSHOP_USER')" id="revertedProjects" th:unless="${param.urgentRevert}">
+			<div class="card-header">
+				<h5 class="card-title">Reverted Projects</h5>
+				<p class="card-category">Reverted Projects by reviewed WORKSHOP USERS</p>
+			</div>
+			<div class="card-body">
+				<table class="table">
+				  <thead>
+				    <tr>
+				      <th scope="col">Project Name</th>
+				      <th scope="col">Rejection Reason</th>
+				      <th scope="col">Rejected By</th>
+				      <th scope="col">Due Date</th>
+				      <th scope="col">Action</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				  	<tr th:if="${#lists.size(revertedProjects) < 0}" >
+				  		<td colspan="5" class="text-danger text-center"> -- No Data Available -- </td>
+				  	</tr>
+				    <tr th:each="project : ${revertedProjects}">
+				      <th scope="row" th:text="${project.name}"></th>
+				      <td th:text="${project.rejectionReason}"></td>
+				      <td th:text="${project.user.username}"></td>
+				      <td th:text="${project.dueDate}"></td>
+				      <td th:id="${project.projectId}">
+				      	<button class="btn btn-info">Check the project</button>
+				      </td>
+				    </tr>
+				  </tbody>
+				</table>
+			</div>
+			<div class="card-footer"></div>
+		</div>
+		
+		<div class="container-fluid card" sec:authorize="hasAuthority('WORKSHOP_USER')" id="projectsInTheWorkshop" th:if="${#lists.size(projectsInWorkshop) > 0}">
+			<div class="card-header">
+				<h5 class="card-title">Projects in the workshop</h5>
+				<p class="card-category">Projects which came from the stores with product allocations</p>
+			</div>
+			<div class="card-body">
+				<table class="table">
+				  <thead>
+				    <tr>
+				      <th scope="col">Project Name</th>
+				      <th scope="col">Description</th>
+				      <th scope="col">Quantity</th>
+				      <th scope="col">Due Date</th>
+				      <th scope="col">Status</th>
+				      <th scope="col">Priority</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr th:each="project : ${projectsInWorkshop}">
+				      <th scope="row" th:text="${project.name}"></th>
+				      <td th:text="${project.description}"></td>
+				      <td th:text="${project.quantity}"></td>
+				      <td th:text="${project.dueDate}"></td>
+				      <td th:text="${project.status}"></td>
+				      <td th:text="${project.priority}"></td>
+				    </tr>
+				  </tbody>
+				</table>
+			</div>
+			<div class="card-footer"></div>
+		</div>
+		
+        <div class="container-fluid card" id="newProject"  sec:authorize="hasAuthority('WORKSHOP_USER')">
+			<div class="card-header">
+				<h5 class="card-title">Create New Project</h5>
+			</div>
+			<div class="card-body">
+				<form th:action="@{/project/getApproval}" th:object="${project}" method="POST">
+					<div class="row">
+						<div class="col-md-4">
+						  <div class="form-group mb-3">
+						    <label for="ProjectName">Project Name</label>
+						    <input type="text" class="form-control" th:field="*{name}" placeholder="MIT - MINI PC FOR QMS" required>
+						    <small id="projectNameExistError" class="d-none text-danger">Project Name exists.Select different name.</small>
+						  </div>
+						</div>
+						<div class="col-md-8">
+						  <div class="form-group mb-3">
+						    <label for="description">Description</label>
+						    <textarea class="form-control" rows="5" th:field="*{description}" placeholder="MINI PCs' with 4GB RAM 512GB HARD DRIVES installed" required></textarea> 
+						  </div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-5">
+						  <div class="form-group mb-3">
+						    <label for="quantity">Quantity</label>
+						    <input type="number" class="form-control" min="1" maxlength="5" th:field="*{quantity}" required>
+						  </div>
+						</div>
+						<div class="col-md-4">
+						  <div class="form-group mb-3">
+						    <label for="dueDate">Due Date</label>
+						    <input type="date" class="form-control" th:field="*{dueDate}" min="2021-12-31" max="2099-12-31" required>
+						  </div>
+						</div>
+						<div class="col-md-3">
+						  <div class="form-group mb-3">
+						    <label for="proirity">Priority</label>
+						    <select class="form-select" th:field="*{priority}" required>
+						    	<option value="">--Select Priority--</option>
+						    	<option value="LOW">Low</option>
+						    	<option value="MEDIUM">Medium</option>
+						    	<option value="HIGH">High</option>
+						    	<option value="URGENT">URGENT</option>
+						    </select>
+						  </div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-8 justify-content-end">
+						  <button type="submit" class="btn btn-primary">get Approval</button>
+						  <button type="reset" class="btn btn-danger">Reset</button>
+						</div>
+					</div>						
+				</form>
+			</div>
+			<div class="card-footer"></div>
+		</div>
+		
+		<div class="container-fluid card" sec:authorize="hasAuthority('KEEPER')" th:if="${param.urgent}">
+			<div class="card-header">
+				<h5 class="card-title">Urgent Projects</h5>
+			</div>
+			<div class="card-body">
+				<table class="table">
+				  <thead>
+				    <tr>
+				      <th scope="col">Project Name</th>
+				      <th scope="col">Description</th>
+				      <th scope="col">Quantity</th>
+				      <th scope="col">Priority</th>
+				      <th scope="col">Due Date</th>
+				      <th scope="col">Action</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr th:each="project : ${urgentProject}">
+				      <th scope="row" th:text="${project.name}"></th>
+				      <td th:text="${project.description}"></td>
+				      <td th:text="${project.quantity}"></td>
+				      <td th:text="${project.priority}"></td>
+				      <td th:text="${project.dueDate}"></td>
+				      <td th:id="project.projectId">
+				      	<a class="btn btn-primary" th:href="@{/inventory?allocateProducts={id}(id=${project.projectId})}">Allocate Products</a>
+				      </td>
+				    </tr>
+				  </tbody>
+				</table>
+			</div>
+			<div class="card-footer">
+			</div>
+		</div>
+		
+		<div class="container-fluid card" sec:authorize="hasAuthority('KEEPER')">
+			<div class="card-header">
+				<h5>Projects Need to Allocate Products</h5>
+			</div>
+			<div class="card-body">
+				<table class="table">
+				  <thead>
+				    <tr>
+				      <th scope="col">Project Name</th>
+				      <th scope="col">Description</th>
+				      <th scope="col">Quantity</th>
+				      <th scope="col">Priority</th>
+				      <th scope="col">Due Date</th>
+				      <th scope="col">Action</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr th:each="project : ${inventoryProjects}">
+				      <th scope="row" th:text="${project.name}"></th>
+				      <td th:text="${project.description}"></td>
+				      <td th:text="${project.quantity}"></td>
+				      <td th:text="${project.priority}"></td>
+				      <td th:text="${project.dueDate}"></td>
+				      <td th:id="project.projectId">
+				      	<a class="btn btn-primary" th:href="@{/inventory?allocateProducts={id}(id=${project.projectId})}">Allocate Products</a>
+				      </td>
+				    </tr>
+				  </tbody>
+				</table>
+			</div>
+			<div class="card-footer">
+			</div>
+		</div>
+		
+		<div class="container-fluid card" th:unless="${param.highPriority}">
+			<div class="card-header">
+				<h5>Projects Details</h5>
+			</div>
+			<div class="card-body">
+				<table class="table">
+				  <thead>
+				    <tr>
+				      <th scope="col">Project Name</th>
+				      <th scope="col">Description</th>
+				      <th scope="col">Status</th>
+				      <th scope="col">Quantity</th>
+				      <th scope="col">Due Date</th>
+				      <th scope="col">Priority</th>
+				      <th scope="col" sec:authorize="hasAuthority('ADMIN')|| hasAuthority('WORKSHOP_ADMIN')">Actions</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr th:each="project: ${allProjects}" th:id="${'id-' + project.projectId}">
+				      <th scope="row" th:text="${project.name}"></th>
+				      <td th:text="${project.description}"></td>
+				      <td th:text="${project.status}"></td>
+				      <td th:text="${project.quantity}"></td>
+				      <td th:text="${project.dueDate}"></td>
+				      <td th:text="${project.priority}"></td>
+				      <td sec:authorize="hasAuthority('ADMIN') || hasAuthority('WORKSHOP_ADMIN')" th:id="${project.projectId}">
+				      	<button class="btn btn-warning" >Remove Project</button>
+				      </td>
+				    </tr>
+				  </tbody>
+				</table>
+			</div>
+		</div>
+      </div>
+      <div th:replace="fragments/footer :: footer">..</div>
+    </div>
+  </div>
+  
+  <div th:insert="fragments/scripts :: scripts(~{::script})">
+  	<script src="../js/project.js" type="text/javascript"></script>
+  </div>
+
+</body>
+
+</html>

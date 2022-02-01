@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments/head :: head(~{::title}, ~{})">
+	<title>Finished Products :: KLIMS</title>
+</head>
+
+<body class="">
+  <div class="wrapper ">
+  <!-- ---------------------- Navigation content -------------------------- -->
+    <div th:insert="fragments/sidebar :: sidebar(active='finished-products')"></div>
+    <div class="main-panel">
+    <!-- Navbar -->
+    <div th:insert="fragments/navbar(title='Finished Products Details')"></div>
+    
+    <div class="content">
+	<div class="container-fluid card mt-5">
+		<div class="card-header">
+			<div class="row">
+			   <div class="col-md-8">
+					<h3 class="card-title">All Finished Products</h3>
+			   </div>
+			   <div class="col-md-4">
+			   	<select id="prodctCategorySelect" class="form-select">
+			   		<option value="">--Select Category To Sort--</option>
+			   		<option th:each="category : ${categories}" th:value="${category.serial}" th:text="${category.categoryName}"></option> 
+				</select>
+			 </div>
+			</div>
+		</div>
+		<div class="card-body" id="allDetailsTable">
+			<input type="hidden" id="status" value="5">
+			<table class="table">
+			  <thead>
+			    <tr>
+			      <th scope="col">Serial Number</th>
+			      <th scope="col">Product Name</th>
+			      <th scope="col">Description</th>
+			      <th scope="col">Product Type</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			  	<tr th:if="${#lists.size(finishedProducts) == 0}">
+			  		<td colspan="5" class="text-danger text-center"> -- No Data Available -- </td>
+			  	</tr>
+			    <tr th:each="product:${finishedProducts}" th:unless="${#lists.size(finishedProducts) == 0}">
+			      <th scope="row" th:text="${product.serialNumber}"></th>
+			      <td th:text="${product.productName}"></td>
+			      <td th:text="${product.description}"></td>
+			      <td th:text="${product.type.categoryName}"></td>
+			    </tr>
+			  </tbody>
+			</table>
+			<table class="table" id="sortedTable">
+			  <thead>
+			    <tr>
+			      <th scope="col">Serial Number</th>
+			      <th scope="col">Product Name</th>
+			      <th scope="col">Description</th>
+			      <th scope="col">Product Type</th>
+			    </tr>
+			  </thead>
+			  <tbody id="sortedTableBody">
+			  </tbody>
+			</table>
+		</div>
+	</div>
+	
+	</div>
+	<div th:replace="fragments/footer :: footer">..</div>
+    </div>
+  </div>
+    
+    <div th:insert="fragments/scripts :: scripts(~{::script})">
+    	<script type="text/javascript" src="../js/sortedTableForInventories.js"></script>
+    </div>
+    
+  </body>
+</html>

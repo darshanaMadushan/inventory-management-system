@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments/head :: head(~{::title}, ~{})">
+	<title>User Profile :: KLIMS</title>
+</head>
+
+<body class="">
+  <div class="wrapper ">
+    <div th:insert="fragments/sidebar :: sidebar(active='user-details')"></div>
+    
+    <div class="main-panel">
+      <!-- Navbar -->
+      <div th:insert="fragments/navbar(title='User Details')"></div>
+      <!-- End Navbar -->
+      <div class="content">
+      
+      <div class="row d-none" id="alertsRow">
+      	<div class="alert alert-success text-center d-none" id="updateSuccessAlert">
+      		<p>Successfully Updated User Details.</p>
+      	</div>
+      	<div class="alert alert-danger text-center d-block" id="updateErrorAlert"></div>
+      </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="card card-user">
+              <div class="image">
+                <img src="../images/background.jpg" alt="rcstotech background" width="100%">
+              </div>
+              <div class="card-body">
+                <div class="author">
+                    <img class="avatar border-gray" src="../assets/img/logo-small.png" alt="profile picture">
+                    <h5 class="title" th:text="${user.name}" ></h5>
+                  <p class="description" th:text="${'@' + user.username}" id="editUsername"></p>
+                </div>
+                <p class="description text-center" th:text="${'Designation: ' + user.designation}"></p>
+                <p class="description text-center">RCS2 Technologies PVT Ltd.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <div class="card card-user">
+              <div class="card-header">
+                <h5 class="card-title">Edit Profile</h5>
+              </div>
+              <div class="card-body">
+                <form>
+                  <div class="row">
+                    <div class="col-md-5 pr-1">
+                      <div class="form-group">
+                        <label>Company</label>
+                        <input type="text" class="form-control" disabled="" placeholder="Company" value="RCS2 Technologies PVT Ltd.">
+                      </div>
+                    </div>
+                    <div class="col-md-3 px-1">
+                      <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" class="form-control" th:value="${user.username}" id="updateUsername" disabled="disabled">
+                      </div>
+                    </div>
+                    <div class="col-md-4 pl-1">
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input type="email" class="form-control" th:value="${user.email}" id="updateEmail">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12 pr-1">
+                      <div class="form-group">
+                        <label>Name In Full</label>
+                        <input type="text" class="form-control" th:value="${user.name}" id="updateName">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-7 pr-1">
+                      <div class="form-group">
+                        <label>Designation</label>
+                        <input type="text" class="form-control" th:value="${user.designation}" id="updateDesignation">
+                      </div>
+                    </div>
+                    <div class="col-md-4 px-1">
+                      <div class="form-group">
+                        <label>Role</label>
+                        <input type="text" class="form-control" th:value="${user.role}" disabled>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 pr-1">
+                      <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" class="form-control" id="updatePassword">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Re Enter Password</label>
+                        <input type="password" class="form-control" id="updateReEnterPassword" onchange="javascript:checkPasswords('updatePassword', 'updateReEnterPassword', 'updateError');">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12 px-1">
+                    	<p class="text-center" id="updateError"></p>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label>Company Address</label>
+                        <textarea class="form-control textarea" disabled="true">No. 03, Harmers' Avenue, Colombo 06, Sri Lanka.</textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="update ml-auto mr-auto">
+                      <input type="hidden" th:value="${user.id}" id="userId">
+                      <button type="button" class="btn btn-primary btn-round" id="updateButton" onclick="javascript:updateUserProfile();">Update Profile</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div th:replace="fragments/footer :: footer">..</div>
+    </div>
+  </div>
+ 
+  <div th:insert="fragments/scripts :: scripts(~{::script})">
+  	<script type ="text/javascript" src="../js/signup.js"></script>
+  </div>
+  
+</body>
+
+</html>

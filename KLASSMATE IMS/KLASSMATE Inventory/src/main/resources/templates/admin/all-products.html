@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments/head :: head(~{::title}, ~{})">
+	<title>All Products :: KLIMS</title>
+</head>
+
+<body class="">
+  <div class="wrapper ">
+	  <!-- ---------------------- Navigation content -------------------------- -->
+	    <div th:insert="fragments/sidebar :: sidebar(active='all-products')"></div>
+	    <div class="main-panel">
+	      <!-- Navbar -->
+	      <div th:insert="fragments/navbar(title='All Products Details')"></div>
+	      <!-- End Navbar -->
+	     <div class="content"> 
+		
+			<!-- All the products in KLASSMATE RCS2 -->
+			<div class="container-fluid card mt-3 pt-3" th:if="${param.replaced}">
+			  <div class="card-header">
+			  	<h3 class="card-title">Replaced Products Details</h3>
+			  </div>
+			  <div class="card-body">
+				<table class="table mt-4 mb-3">
+					  <thead class="thead-light">
+					    <tr>
+					      <th scope="col">Serial Number</th>
+					      <th scope="col">Product Name</th>
+					      <th scope="col">Description</th>
+					      <th scope="col">Product Type</th>
+					      <th scope="col">Replaced With</th>
+					    </tr>
+					  </thead>
+					  <tbody>
+					  	<tr th:if="${#lists.size(replacedProducts) == 0}">
+					  		<td colspan="5" class="text-danger text-center"> -- No Data Available -- </td>
+					  	</tr>
+					    <tr th:each="product:${replacedProducts}" th:unless="${#lists.size(replacedProducts) == 0}">
+					      <th scope="row" th:text="${product.serialNumber}"></th>
+					      <td th:text="${product.productName}"></td>
+					      <td th:text="${product.Description}"></td>
+					      <td th:text="${product.type.getCategoryName()}"></td>
+					      <td th:text="${product.status}"></td>
+					    </tr>
+					  </tbody>
+					</table>
+			  </div>
+			</div>
+			
+			<div class="container-fluid card mt-5 pt-3">
+				<div class="row">
+				  <h3 class="col-md-7 card-title">All the Products in KLASSMATE Inventory</h3>
+	      		  <div class="credits col-md-5">
+				    <form class="form" onsubmit="return false;">
+				    	<div class="row justify-content-end">
+						    <div class="col-md-8">
+								<input type="text" placeholder="search by serial number" class="form-control d-inline" id="productSearchInput" required/>
+						    </div>
+				    	</div>
+				   	 </form>			    
+				  </div>
+				</div>
+				<div class="card-body" id="allProductDetailsTable">
+					<table class="table mt-4 mb-3" id="allProductsDetails">
+					  <thead class="thead-light">
+					    <tr>
+					      <th scope="col">
+					      	Serial Number
+					      </th>
+					      <th scope="col">Product Name</th>
+					      <th scope="col">Description</th>
+					      <th scope="col">Product Type</th>
+					      <th scope="col">Status</th>
+					    </tr>
+					  </thead>
+					  <tbody>
+					    <tr th:each="product:${allProducts}">
+					      <th scope="row" th:text="${product.serialNumber}"></th>
+					      <td th:text="${product.productName}"></td>
+					      <td th:text="${product.Description}"></td>
+					      <td th:text="${product.type.getCategoryName()}"></td>
+					      <td th:text="${product.status}"></td>
+					    </tr>
+					  </tbody>
+					</table>
+				</div>
+				
+				<div class="row d-none" id="selectedProductDetailsTable">
+					<table class="table mt-4 mb-3">
+					  <thead class="thead-light">
+					    <tr>
+					      <th scope="col">
+					      	Serial Number
+					      </th>
+					      <th scope="col">Product Name</th>
+					      <th scope="col">Description</th>
+					      <th scope="col">Product Type</th>
+					      <th scope="col">Status</th>
+					    </tr>
+					  </thead>
+					  <tbody id="selectedProductDetailsTableBody">
+					    <tr id="noDataRow" class="text-center text-danger">
+			    		</tr>
+			    		
+					    <tr>
+					      <th></th>
+					      <td></td>
+					      <td></td>
+					      <td></td>
+					      <td></td>
+					    </tr>
+					  </tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div th:replace="fragments/footer :: footer">..</div>
+		</div>
+	</div>
+	
+	<div th:insert="fragments/scripts :: scripts(~{::script})">
+	    <script type="text/javascript" src="/js/allProducts.js"></script>
+	</div>
+  </body>
+</html>

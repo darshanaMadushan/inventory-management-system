@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments/head :: head(~{::title}, ~{})">
+	<title>Allocated Products :: KLIMS</title>
+</head>
+
+<body class="">
+  <div class="wrapper ">
+  <!-- ---------------------- Navigation content -------------------------- -->
+    <div th:insert="fragments/sidebar :: sidebar(active='allocated')"></div>
+    <div class="main-panel">
+    <!-- Navbar -->
+      <div th:insert="fragments/navbar(title='Allocated Products Details')"></div>
+   
+      <div class="content">
+		<div class="container-fluid card mt-5 pt-3">
+			<div class="card-header">
+				<h3 class="card-title">Allocated Products in KLASSMATE</h3>
+			</div>
+			<div class="card-body">
+				<table class="table mt-4 mb-3">
+				  <thead class="thead-light">
+				    <tr>
+				      <th scope="col">Serial Number</th>
+				      <th scope="col">Product Name</th>
+				      <th scope="col">Description</th>
+				      <th scope="col">Product Type</th>
+				      <th scope="col">Allocated To</th>
+				      <th scope="col"></th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				  	<tr th:if="${#lists.size(allocatedProducts) == 0}">
+				  		<td colspan="5" class="text-danger text-center"> -- No Data Available -- </td>
+				  	</tr>
+				    <tr th:each="product, iStat:${allocatedProducts}" th:unless="${#lists.size(allocatedProducts) == 0}">
+				      <th scope="row" th:text="${product.serialNumber}" class="serial"></th>
+				      <td th:text="${product.productName}"></td>
+				      <td th:text="${product.Description}"></td>
+				      <td th:text="${product.type.getCategoryName()}"></td>
+				      <td th:text="${product.assembledTo.getSerialNumber()}"></td>
+				    </tr>
+				  </tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div th:replace="fragments/footer :: footer">..</div>
+   </div>
+ </div>
+  
+    <div th:insert="fragments/scripts :: scripts(~{})"></div>
+  </body>
+</html>

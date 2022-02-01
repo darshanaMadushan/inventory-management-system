@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments/head :: head(~{::title}, ~{})">
+	<title>Approve Projects :: KLIMS</title>
+</head>
+
+<body class="">
+  <div class="wrapper ">
+  <!-- ---------------------- Navigation content -------------------------- -->
+    <div th:insert="fragments/sidebar :: sidebar(active='approve-projects')"></div>
+    <div class="main-panel">
+    <!-- Navbar -->
+      <div th:insert="fragments/navbar(title='Approve Projects')"></div>
+      <!-- End Navbar -->
+      <div class="content">
+      	
+      	
+      	<div class="alert alert-success text-center d-none" id="approvalSuccessAlert">Project Approved Successfully.</div>
+      	<div class="alert alert-danger text-center d-none" id="approvalRejectionAlert"></div>
+
+      	<div class="container-fluid card" th:if="${param.urgent}">
+        	<div class="card-header">
+        		<h5>Urgent Projects</h5>
+        	</div>
+        	<div class="card-body">
+        		<table class="table">
+				  <thead>
+				    <tr>
+				      <th scope="col">Project Name</th>
+				      <th scope="col">Description</th>
+				      <th scope="col">Quantity</th>
+				      <th scope="col">Priority</th>
+				      <th scope="col">Due Date</th>
+				      <th scope="col">Actions</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr th:each="project: ${urgentProject}">
+				      <th scope="row" th:text="${project.name}"></th>
+				      <td th:text="${project.description}"></td>
+				      <td th:text="${project.quantity}"></td>
+				      <td th:text="${project.priority}"></td>
+				      <td th:text="${project.dueDate}"></td>
+				      <td th:id="${project.projectId}">
+				      	<button class="btn btn-primary">Approve</button>
+				      </td>
+				    </tr>
+				  </tbody>
+				</table>
+        	</div> 
+        </div>
+              	
+        <div class="container-fluid card">
+        	<div class="card-header">
+        		<h5>Projects need to be approved</h5>
+        	</div>
+        	<div class="card-body">
+        		<table class="table">
+				  <thead>
+				    <tr>
+				      <th scope="col">Project Name</th>
+				      <th scope="col">Description</th>
+				      <th scope="col">Quantity</th>
+				      <th scope="col">Priority</th>
+				      <th scope="col">Due Date</th>
+				      <th scope="col">Actions</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr th:each="project: ${projects}">
+				      <th scope="row" th:text="${project.name}"></th>
+				      <td th:text="${project.description}"></td>
+				      <td th:text="${project.quantity}"></td>
+				      <td th:text="${project.priority}"></td>
+				      <td th:text="${project.dueDate}"></td>
+				      <td th:id="${project.projectId}">
+				      	<button class="btn btn-primary">Approve</button>
+				      	<button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#rejectConfirmationModal">Reject</button>
+				      </td>
+				    </tr>
+				  </tbody>
+				</table>
+        	</div> 
+        </div>
+        		
+		<!-- Modal for reject confirmation -->
+		<div class="modal fade" id="rejectConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLongTitle">Reason for rejection</h5>
+		        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		        <textarea rows="3" cols="50" class="form-control" id="rejectionReason"></textarea>
+		        <span id="reasonError" class="text-danger d-none">Valid Reason for rejection is required.</span>
+		        <input type="hidden" id="modalProjectId" >
+		        <input type="hidden" id="rejectionUserId" th:value="${username}">
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
+		        <button type="button" class="btn btn-danger" id="rejectProject">confirm rejection</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+	  </div>
+      <div th:replace="fragments/footer :: footer">..</div>
+    </div>
+  </div>
+  
+  <div th:insert="fragments/scripts :: scripts(~{::script})">
+    <script type="module" src="../js/approveProject.js"></script>
+  </div>
+  
+</body>
+
+</html>
